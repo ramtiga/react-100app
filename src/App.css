@@ -25,3 +25,9 @@
   padding: 20px;
   margin: 20px auto 0;
 }
+
+.error {
+  color: red;
+  font-size: 0.875em;
+  margin-topp: 0.25em;
+}
