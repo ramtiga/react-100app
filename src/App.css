@@ -159,3 +159,7 @@ input[type='phone'] {
     opacity: 0.7;
   }
 }
+
+.active {
+  border: 2px solid #3b82f6;
+}
