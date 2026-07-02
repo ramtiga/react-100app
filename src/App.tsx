@@ -1,10 +1,10 @@
 import './App.css'
-import { Question41 } from './components/basic/Question41'
+import { Question42 } from './components/basic/Question42'
 
 function App() {
   return (
     <div>
-      <Question41 />
+      <Question42 />
     </div>
   )
 }
