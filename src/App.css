@@ -596,3 +596,79 @@ input[type='phone'] {
   background-color: #6c757d;
   cursor: not-allowed;
 }
+
+/* Question49: Toggle Hook Styles */
+
+.toggle-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.toggle-section {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.toggle-section:hover {
+  border-color: #646cff;
+  box-shadow: 0 4px 12px rgba(100, 108, 255, 0.1);
+}
+
+.toggle-button {
+  padding: 12px 24px;
+  margin: 8px;
+  border: 2px solid #646cff;
+  background-color: white;
+  color: #646cff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #646cff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(100, 108, 255, 0.3);
+}
+
+.modal-content {
+  background-color: #e3f2fd;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #2196f3;
+  margin-top: 15px;
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+}
+
+.modal-close-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.modal-close-button:hover {
+  background-color: #d32f2f;
+}
+
+.sidebar-status {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-left: 10px;
+}
