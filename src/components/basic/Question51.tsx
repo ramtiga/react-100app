@@ -1,12 +1,56 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 
-function useForm(initialValues, validate) {
+type FormValues = {
+  [key: string]: string | number | boolean
+}
+
+type FormErrors = Record<string, string>
+
+type UserForm = FormValues & {
+  email: string
+  password: string
+}
+
+type ValidationFunction<T extends FormValues> = (values: T) => FormErrors
+
+function useForm<T extends FormValues>(
+  initialValues: T,
+  validate: ValidationFunction<T>,
+) {
   // values, errors, handleChange, handleSubmit, resetを実装
+  const [values, setValues] = useState<T>(initialValues)
+  const [errors, setErrors] = useState<FormErrors>({})
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+
+    setValues((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (onSubmit: (values: T) => void) => {
+    return (e: FormEvent) => {
+      e.preventDefault()
+
+      const validationErrors = validate(values)
+      if (Object.keys(validationErrors).length === 0) {
+        onSubmit(values)
+      }
+      setErrors(validationErrors)
+    }
+  }
+
+  const reset = () => {
+    setValues(initialValues)
+    setErrors({})
+  }
+
+  return { values, errors, handleChange, handleSubmit, reset }
 }
 
 export const Question51 = () => {
-  const validate = (values) => {
-    const errors = {}
+  const validate: ValidationFunction<UserForm> = (values: UserForm) => {
+    const errors: FormErrors = {}
+
     if (!values.email) errors.email = 'メールアドレスは必須です'
 
     if (!values.password) errors.password = 'パスワードは必須です'
