@@ -5,7 +5,9 @@ type WindowSize = {
   height: number
 }
 
-function useWindowSize() {
+type WindowSizeReturn = WindowSize
+
+function useWindowSize(): WindowSizeReturn {
   const [windowSize, setWindowSize] = useState<WindowSize>({
     width: window.innerWidth,
     height: window.innerHeight,
