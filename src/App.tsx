@@ -1,10 +1,11 @@
 import './App.css'
-import { Question55 } from './components/basic/Question55'
+import { UserList, PostDetail } from './components/basic/Question55'
 
 function App() {
   return (
     <div>
-      <Question55 />
+      <UserList />
+      <PostDetail postId={1} />
     </div>
   )
 }

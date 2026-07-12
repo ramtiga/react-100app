@@ -1,30 +1,88 @@
 import { useState, useEffect, useRef } from 'react'
 
-function useFetch(url, options = {}) {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const abortControllerRef = useRef(null)
+type UseFetchReturn<T> = {
+  data: T | null
+  loading: boolean
+  error: Error | null
+  refetch: () => void
+}
 
-  // フェッチ処理の実装
-  // AbortControllerの管理
-  // リトライ機能
+type UseFetchOptions = {
+  retries?: number
+  retryDelay?: number
+}
+
+function useFetch<T = unknown>(
+  url: string,
+  options: UseFetchOptions = {},
+): UseFetchReturn<T> {
+  const { retries = 0, retryDelay = 1000 } = options
+  const [data, setData] = useState<T | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+  const [refetchTrigger, setRefetchTrigger] = useState<number>(0)
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    const fetchData = async (retryCount = 0) => {
+      setLoading(true)
+      setError(null)
+      abortControllerRef.current = new AbortController()
+
+      try {
+        const res = await fetch(url, {
+          signal: abortControllerRef.current.signal,
+        })
+
+        if (!res.ok) {
+          throw new Error(`Error: ${res.status}`)
+        }
+
+        const result = await res.json()
+        setData(result)
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return
+        }
+
+        if (retryCount < retries) {
+          await new Promise((resolve) => setTimeout(resolve, retryDelay))
+          return fetchData(retryCount + 1)
+        }
+
+        setError(err as Error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [url, refetchTrigger])
 
   const refetch = () => {
-    // 再フェッチ機能
+    setRefetchTrigger((prev) => prev + 1)
   }
 
   return { data, loading, error, refetch }
 }
 
+type User = {
+  id: number
+  name: string
+}
+
 // 使用例1: ユーザー一覧
-function UserList() {
+export function UserList() {
   const {
     data: users,
     loading,
     error,
     refetch,
-  } = useFetch('https://jsonplaceholder.typicode.com/users')
+  } = useFetch<User[]>('https://jsonplaceholder.typicode.com/users')
 
   if (loading) return <div>Loading users...</div>
   if (error) return <div>Error: {error.message}</div>
@@ -42,13 +100,23 @@ function UserList() {
   )
 }
 
+type Post = {
+  id: number
+  title: string
+  body: string
+}
+
+type PostDetailProps = {
+  postId: number
+}
+
 // 使用例2: 投稿詳細（動的URL）
-function PostDetail({ postId }) {
+export function PostDetail({ postId }: PostDetailProps) {
   const {
     data: post,
     loading,
     error,
-  } = useFetch(
+  } = useFetch<Post>(
     `https://jsonplaceholder.typicode.com/posts/${postId}`,
     { cache: true }, // キャッシュ有効化
   )
